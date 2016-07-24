@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace PoGoLocationExtractor.Data
 {
-    public interface ILocation
+    public interface IPoint
+    {
+        double Latitude { get; set; }
+        double Longitude { get; set; }
+    }
+
+    public interface ILocation : IPoint
     {
         string Id { get; set; }
-        decimal Latitude { get; set; }
-        decimal Longitude { get; set; }
         string Type { get; }
     }
 }

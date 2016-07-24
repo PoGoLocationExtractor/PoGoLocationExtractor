@@ -3,6 +3,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Text;
+using PoGoLocationExtractor.Data;
 using PoGoLocationExtractor.Data.Entities;
 
 namespace PoGoLocationExtractor
@@ -26,6 +27,14 @@ namespace PoGoLocationExtractor
             WritePokemons(context, converter);
         }
 
+        private static void WriteGyms(DataContext context, LocationToKmlConverter converter)
+        {
+            var gyms = context.GetTable<Gym>();
+            var filtered = gyms.Where(FilterGeofencing).ToList();
+            var text = converter.Convert(filtered);
+            WriteFile("Gyms.kml", text);
+        }
+        
         private static void WritePokemons(DataContext context, LocationToKmlConverter converter)
         {
             for (int pokemonNumber = 1; pokemonNumber <= 150; pokemonNumber++)
@@ -40,13 +49,6 @@ namespace PoGoLocationExtractor
 
                 WriteFile(number.ToString("D3") + ".kml", text);
             }
-        }
-
-        private static void WriteGyms(DataContext context, LocationToKmlConverter converter)
-        {
-            var gyms = context.GetTable<Gym>();
-            var text = converter.Convert(gyms);
-            WriteFile("Gyms.kml", text);
         }
 
         private static void WriteFile(string fileName, StringBuilder text)
@@ -66,5 +68,19 @@ namespace PoGoLocationExtractor
             return Path.Combine(outputDirectory, fileName);
         }
 
+        private static IPoint[] Polygon =
+        {
+            new Point(48.402306, 11.219846), 
+            new Point(48.382969, 11.889698), 
+            new Point(47.927679, 11.952057), 
+            new Point(47.878907, 11.040346), 
+        };
+
+        private static bool FilterGeofencing(IPoint point)
+        {
+            var gf = new Geofencing();
+            var result = gf.IsPointInPolygon(Polygon, point);
+            return result;
+        }
     }
 }

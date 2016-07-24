@@ -12,10 +12,10 @@ namespace PoGoLocationExtractor.Data.Entities
         public string Id { get; set; }
 
         [System.Data.Linq.Mapping.Column(Name = "latitude")]
-        public decimal Latitude { get; set; }
+        public double Latitude { get; set; }
 
         [System.Data.Linq.Mapping.Column(Name = "longitude")]
-        public decimal Longitude { get; set; }
+        public double Longitude { get; set; }
 
         [NotMapped]
         public string Type { get { return "Gym"; }}
